@@ -4,7 +4,9 @@ from BazilioVisitor import BazilioVisitor
 
 class BazilioSemanticVisitor(BazilioVisitor):
 
-    def __init__(self):
+    def __init__(self, emit=print):
+
+        self.emit = emit
         self.notas_midi = []
         self.errores = 0
         self.octava_base = 4
@@ -13,7 +15,7 @@ class BazilioSemanticVisitor(BazilioVisitor):
 
         if ctx.SILENCIO() is not None:
             self.notas_midi.append(-1)
-            print("Silencio musical")
+            self.emit("Silencio musical")
             return None
 
         nota = ctx.NOTA().getText()
@@ -53,7 +55,7 @@ class BazilioSemanticVisitor(BazilioVisitor):
 
         if midi < 21 or midi > 108:
             self.errores += 1
-            print(
+            self.emit(
                 f"Error semántico: {nota} "
                 "fuera del rango del piano"
             )
@@ -63,7 +65,7 @@ class BazilioSemanticVisitor(BazilioVisitor):
 
         self.notas_midi.append(midi)
 
-        print(
+        self.emit(
             f"Nota: {nota:<4} | "
             f"MIDI: {midi:3d} | "
             f"Frecuencia: {frecuencia:.2f} Hz"

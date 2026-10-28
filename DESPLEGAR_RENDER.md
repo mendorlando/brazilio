@@ -1,16 +1,31 @@
-# Publicar Bazilio en Render
+# Bazilio con ANTLR4 en Render
 
-La interfaz index.html funciona completamente en el navegador: audio, PDF y exportación .bzl. El compilador Python de terminal no se ejecuta en este sitio estático.
+La página llama a POST /api/compile. Python ejecuta el lexer, parser y visitante semántico de ANTLR4 y devuelve las notas MIDI. El navegador reproduce esas notas y genera el PDF y el archivo .bzl después de una compilación correcta.
 
-1. Sube el proyecto a un repositorio de GitHub.
-2. En Render selecciona New > Static Site y conecta ese repositorio.
-3. Nombre: bazilio. Selecciona la rama que contiene los archivos.
-4. Root Directory: dejar vacío.
-5. Build Command: `mkdir -p dist && cp index.html dist/index.html`
-6. Publish Directory: `dist`
-7. Selecciona Create Static Site y espera a que termine el despliegue.
+## Despliegue
 
-También puedes usar New > Blueprint con el archivo render.yaml incluido.
+El sitio estático anterior no ejecuta Python. Crea un servicio nuevo:
 
-No se requieren variables de entorno. Solo se publica index.html.
-Prueba en la URL de Render reproducir C4 D4 E4 C4 B3 A3, detener el audio, descargar el PDF y exportar el archivo .bzl.
+1. Render > New > Web Service.
+2. Conecta mendorlando/brazilio, rama antlr4-web.
+3. Nombre: bazilio-antlr4. Language: Python 3. Root Directory: vacío.
+4. Build Command: `pip install -r requirements.txt`
+5. Start Command: `gunicorn --bind 0.0.0.0:$PORT app:app`
+6. Selecciona Free y despliega. Health Check Path: `/health`.
+7. Usa la nueva URL para reproducir, descargar PDF y exportar .bzl.
+
+También puedes crear un Blueprint con render.yaml.
+
+## Local
+
+`python -m pip install -r requirements.txt`
+
+`python -m flask --app app run`
+
+Abre http://127.0.0.1:5000; no abras index.html directamente.
+
+## Verificación
+
+`python -m unittest discover -s tests -v`
+
+GET /health debe indicar ANTLR4. POST /api/compile acepta JSON con source (por ejemplo `Main { C4 D4 E4 C4 B3 A3 }`) y octave (4). Devuelve árbol sintáctico y notas MIDI; los errores léxicos, sintácticos o semánticos tienen estado 422.

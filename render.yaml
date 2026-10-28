@@ -1,6 +1,9 @@
 services:
   - type: web
-    name: bazilio
-    runtime: static
-    buildCommand: mkdir -p dist && cp index.html dist/index.html
-    staticPublishPath: ./dist
+    name: bazilio-antlr4
+    branch: antlr4-web
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
+    healthCheckPath: /health

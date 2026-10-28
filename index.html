@@ -545,17 +545,34 @@ function parseNotes() {
   });
 }
 
-function validate() {
-  const notes = parseNotes();
-  const bad = notes.find(n=>n.error);
-
-  if (bad || !notes.length) {
-    status(bad
-      ? "Nota no válida: "+bad.token
-      : "Escribe algunas notas.");
+async function validate() {
+  const raw = notesEl.value.replace(/,/g, " ").trim();
+  if (!raw) { status("Escribe algunas notas."); return null; }
+  const sequence = raw.split(/\s+/).map(token =>
+    token[0].toUpperCase() + token.slice(1)).join(" ");
+  status("Compilando con ANTLR4...");
+  try {
+    const response = await fetch("/api/compile", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({source: `Main { ${sequence} }`,
+                            octave: Number($("octave").value)}),
+      signal: AbortSignal.timeout(90000)
+    });
+    if (!(response.headers.get("content-type") || "").includes("application/json"))
+      throw new Error("Abre la página desde el servidor Python de Bazilio.");
+    const result = await response.json();
+    if (!response.ok || !result.ok) {
+      status((result.errors || []).map(e =>
+        (e.stage ? e.stage + ": " : "") + e.message).join(" · "));
+      return null;
+    }
+    status("Compilación ANTLR4 correcta.");
+    return result.notes;
+  } catch (e) {
+    status("No se pudo conectar con el compilador. " + e.message);
     return null;
   }
-  return notes;
 }
 
 function refresh() {
@@ -628,12 +645,12 @@ function stop() {
   status("Reproducción detenida.");
 }
 
-function play() {
+async function play() {
   stop();
-  const notes = validate();
-  if (!notes) return;
-
   const id = playId;
+  await audio().resume();
+  const notes = await validate();
+  if (!notes || id !== playId) return;
   const bpm = Math.max(40,
     Math.min(240,Number($("bpm").value)||110));
   const beat = 60/bpm*Number($("duration").value);
@@ -853,11 +870,10 @@ ${filled?"f":"S"}\n`;
   );
 }
 
-$("downloadPdf").onclick=()=>{
-  const notes=validate();
-  if(!notes) return;
-
+$("downloadPdf").onclick=async ()=>{
   const windowPdf=window.open("","_blank");
+  const notes=await validate();
+  if(!notes) { if(windowPdf) windowPdf.close(); return; }
 
   try {
     const bytes=createPdf(notes);
@@ -880,9 +896,10 @@ $("downloadPdf").onclick=()=>{
   }
 };
 
-$("export").onclick=()=>{
-  const notes=validate();
-  if(!notes) return;
+$("export").onclick=async ()=>{
+  const previewWindow=window.open("","_blank");
+  const notes=await validate();
+  if(!notes) { if(previewWindow) previewWindow.close(); return; }
 
   const base=Number($("octave").value);
   const sequence=notes.map(n=>
@@ -891,7 +908,6 @@ $("export").onclick=()=>{
   ).join(" ");
 
   const source=`Main { ${sequence} }\n`;
-  const previewWindow=window.open("","_blank");
 
   try {
     const blob=new Blob([source],
