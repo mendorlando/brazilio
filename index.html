@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bazilio — Estudio musical</title>
+
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #10131c;
+  --panel: #191f2d;
+  --line: #30394d;
+  --text: #edf2ff;
+  --muted: #aab5cc;
+  --accent: #8b9dff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: linear-gradient(135deg,#10131c,#1a2032);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+main {
+  width: min(1050px, 94%);
+  margin: 32px auto;
+}
+
+h1 {
+  margin-bottom: 8px;
+}
+
+p {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 18px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 170px;
+  background: #0d111a;
+  color: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  font: 15px/1.7 monospace;
+  resize: vertical;
+}
+
+input, select {
+  background: #0d111a;
+  color: white;
+  border: 1px solid var(--line);
+  padding: 9px;
+  border-radius: 8px;
+}
+
+.settings, .buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.settings input, .settings select {
+  display: block;
+  margin-top: 7px;
+  width: 115px;
+}
+
+button {
+  cursor: pointer;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 10px 14px;
+  background: #252d40;
+  color: white;
+  font-weight: 600;
+}
+
+button:hover {
+  filter: brightness(1.15);
+}
+
+.primary {
+  background: var(--accent);
+  color: #101426;
+}
+
+.pdf {
+  background: #287a52;
+}
+
+.status {
+  color: #b9c7ff;
+  min-height: 25px;
+}
+
+.hint {
+  font-size: .9rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.chip {
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  background: #111725;
+  border-radius: 7px;
+  font-family: monospace;
+}
+
+.note-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.note-btn {
+  background: #2a3550;
+  border: 1px solid var(--line);
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.note-btn:hover {
+  filter: brightness(1.12);
+}
+
+footer {
+  color: var(--muted);
+  margin-top: 20px;
+}
+
+@media(max-width:760px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .note-buttons {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Estudio visual renovado */
+:root {
+  color-scheme: light;
+  --bg: #f3f4f0;
+  --panel: #fff;
+  --line: #e4e8e2;
+  --text: #17241f;
+  --muted: #6b7972;
+  --accent: #176b52;
+  --ink: #13241e;
+  --mint: #e9f4ed;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 86% 0%, #dcece2 0, transparent 30rem),
+    var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: -.01em;
+}
+
+main {
+  width: min(1180px, 92%);
+  margin: 0 auto;
+  padding: 28px 0 42px;
+}
+
+header {
+  position: relative;
+  padding: 42px 0 30px;
+}
+
+header::before {
+  content: "BAZILIO  /  ESTUDIO MUSICAL";
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 8px 12px;
+  border: 1px solid #d5e5da;
+  border-radius: 999px;
+  background: #ffffffa6;
+  color: var(--accent);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .13em;
+}
+
+h1 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -.065em;
+}
+
+header p {
+  max-width: 590px;
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.layout {
+  grid-template-columns: minmax(0, 1.2fr) minmax(310px, .8fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.panel {
+  padding: clamp(20px, 3vw, 30px);
+  border-color: var(--line);
+  border-radius: 22px;
+  background: var(--panel);
+  box-shadow: 0 12px 40px #1e35230a, 0 2px 6px #1e352305;
+}
+
+.panel > h2 {
+  margin: 0;
+  font-size: 1.22rem;
+  letter-spacing: -.035em;
+}
+
+.panel > h3 {
+  margin: 25px 0 12px;
+  font-size: .95rem;
+}
+
+label {
+  color: #31443a;
+  font-size: .86rem;
+  font-weight: 700;
+}
+
+textarea {
+  min-height: 210px;
+  margin-top: 9px;
+  border: 1px solid #273c32;
+  background: var(--ink);
+  color: #f3f8f3;
+  font-size: 1rem;
+  line-height: 1.9;
+  box-shadow: inset 0 1px 3px #0003;
+}
+
+textarea:focus, input:focus, select:focus {
+  outline: 3px solid #176b5230;
+  border-color: var(--accent);
+}
+
+input, select {
+  border-color: var(--line);
+  background: #fbfcfa;
+  color: var(--text);
+}
+
+.hint {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.settings {
+  gap: 14px;
+  margin: 21px 0;
+}
+
+.settings input, .settings select {
+  width: 130px;
+  min-height: 42px;
+  margin-top: 8px;
+}
+
+.buttons {
+  gap: 9px;
+  margin: 20px 0 12px;
+}
+
+button {
+  min-height: 42px;
+  padding: 10px 14px;
+  border-color: var(--line);
+  background: #f7f9f6;
+  color: #34463d;
+  transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+}
+
+button:hover {
+  filter: none;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px #162c2012;
+  background: #edf3ee;
+}
+
+button:focus-visible {
+  outline: 3px solid #176b5255;
+  outline-offset: 2px;
+}
+
+.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
+}
+
+.primary:hover {
+  background: #105640;
+}
+
+.pdf {
+  border-color: #d7e9dd;
+  background: var(--mint);
+  color: #176143;
+}
+
+.status {
+  min-height: 30px;
+  padding-top: 5px;
+  color: var(--accent);
+  font-size: .9rem;
+  font-weight: 650;
+}
+
+.note-buttons {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  margin: 19px 0 24px;
+}
+
+.note-btn {
+  min-height: 48px;
+  border-color: #e5ebe5;
+  border-radius: 12px;
+  background: #f8faf7;
+  color: #24372d;
+  font-size: .95rem;
+}
+
+.note-btn:hover {
+  filter: none;
+  border-color: #b7d2c0;
+  background: #eaf4ed;
+  color: var(--accent);
+}
+
+.note-btn:last-child {
+  grid-column: span 4;
+  min-height: 38px;
+  background: transparent;
+  color: var(--muted);
+}
+
+.chips {
+  gap: 8px;
+  min-height: 36px;
+}
+
+.chip {
+  padding: 7px 10px;
+  border-color: #dce9df;
+  border-radius: 9px;
+  background: #f0f7f1;
+  color: #245c41;
+  font-weight: 700;
+}
+
+footer {
+  margin-top: 24px;
+  color: #7a8980;
+  font-size: .85rem;
+}
+
+@media(max-width:760px) {
+  main { width: min(100% - 28px, 600px); padding-top: 12px; }
+  header { padding: 32px 0 24px; }
+  .layout { grid-template-columns: 1fr; }
+  .settings { gap: 10px; }
+  .settings label { flex: 1 1 120px; }
+  .settings input, .settings select { width: 100%; }
+  .buttons button { flex: 1 1 145px; }
+}
+
+@media(prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+
+<body>
+<main>
+<header>
+  <h1>Tu música, nota a nota.</h1>
+  <p>
+    Crea una melodía, escúchala al instante y llévate tu partitura o archivo Bazilio.
+    Afinación estándar: La4 = 440 Hz.
+  </p>
+</header>
+
+<div class="layout">
+<section class="panel">
+  <h2>Composición</h2>
+  <p class="hint">Escribe tu secuencia o agrega notas desde el panel de teclas.</p>
+  <label for="notes">Tu secuencia</label>
+  <textarea id="notes" spellcheck="false">E E F G G F E D C C D E E D D</textarea>
+
+  <p class="hint">
+    Usa C D E F G A B. También puedes escribir
+    C4, F#4, Bb4 y silencios R.
+  </p>
+
+  <div class="settings">
+    <label>Tempo (BPM)
+      <input id="bpm" type="number" min="40" max="240" value="110">
+    </label>
+    <label>Duración
+      <select id="duration">
+        <option value="1">Negra</option>
+        <option value="0.5">Corchea</option>
+        <option value="2">Blanca</option>
+      </select>
+    </label>
+    <label>Octava base
+      <input id="octave" type="number" min="2" max="6" value="4">
+    </label>
+  </div>
+
+  <div class="buttons">
+    <button class="primary" id="play">▶ Reproducir</button>
+    <button id="stop">■ Detener</button>
+    <button class="pdf" id="downloadPdf">
+      📄 Guardar y abrir PDF
+    </button>
+    <button id="export">
+      ⬇ Exportar y abrir .bzl
+    </button>
+    <button id="clear">Limpiar</button>
+  </div>
+
+  <div class="status" id="status">Listo.</div>
+</section>
+
+<aside class="panel">
+  <h2>🎵 Botones de notas</h2>
+  <p class="hint">
+    Presiona un botón para escuchar la nota y agregarla al cuadro.
+  </p>
+
+  <div class="note-buttons" id="noteButtons"></div>
+
+  <h3>Vista previa</h3>
+  <div class="chips" id="preview"></div>
+</aside>
+</div>
+
+<footer>Bazilio · Proyecto de Autómatas I</footer>
+</main>
+
+<script>
+(() => {
+"use strict";
+
+const $ = id => document.getElementById(id);
+const notesEl = $("notes");
+const statusEl = $("status");
+const previewEl = $("preview");
+const noteButtonsEl = $("noteButtons");
+
+const pitch = {
+  C:0,"C#":1,Db:1,D:2,"D#":3,Eb:3,
+  E:4,F:5,"F#":6,Gb:6,G:7,
+  "G#":8,Ab:8,A:9,"A#":10,Bb:10,B:11
+};
+
+const natural = ["C","D","E","F","G","A","B"];
+
+let ctx = null;
+let oscillators = [];
+let playId = 0;
+
+function status(s) {
+  statusEl.textContent = s;
+}
+
+function parseNotes() {
+  const raw = notesEl.value.replace(/,/g," ").trim();
+  if (!raw) return [];
+
+  return raw.split(/\s+/).map(token => {
+    if (/^R$/i.test(token))
+      return {token,rest:true};
+
+    const m = /^([A-Ga-g])([#b]?)([0-8]?)$/.exec(token);
+
+    if (!m) return {token,error:true};
+
+    const name = m[1].toUpperCase()+m[2];
+    const octave = m[3]
+      ? Number(m[3]) : Number($("octave").value);
+
+    if (!(name in pitch)) return {token,error:true};
+
+    const midi = (octave+1)*12+pitch[name];
+
+    if (midi<21 || midi>108)
+      return {token,error:true};
+
+    return {token,name,octave,midi,rest:false};
+  });
+}
+
+function validate() {
+  const notes = parseNotes();
+  const bad = notes.find(n=>n.error);
+
+  if (bad || !notes.length) {
+    status(bad
+      ? "Nota no válida: "+bad.token
+      : "Escribe algunas notas.");
+    return null;
+  }
+  return notes;
+}
+
+function refresh() {
+  previewEl.replaceChildren();
+  const notes = parseNotes();
+
+  if (!notes.length) {
+    previewEl.textContent = "Sin notas.";
+    return;
+  }
+  notes.slice(0,100).forEach(n=>{
+    const chip = document.createElement("span");
+    chip.className = "chip";
+    chip.textContent = n.token+(n.error?" ⚠":"");
+    previewEl.append(chip);
+  });
+}
+
+function audio() {
+  if (!ctx)
+    ctx = new (window.AudioContext ||
+               window.webkitAudioContext)();
+  if (ctx.state==="suspended") ctx.resume();
+  return ctx;
+}
+
+function pianoNote(midi,when,duration,volume=.12) {
+  const ac = audio();
+  const freq = 440*Math.pow(2,(midi-69)/12);
+  const end = when+Math.max(.22,duration);
+  const envelope = ac.createGain();
+  const filter = ac.createBiquadFilter();
+
+  filter.type = "lowpass";
+  filter.frequency.value = Math.min(11000,freq*15);
+
+  envelope.gain.setValueAtTime(.00001,when);
+  envelope.gain.exponentialRampToValueAtTime(volume,when+.007);
+  envelope.gain.exponentialRampToValueAtTime(volume*.38,when+.12);
+  envelope.gain.exponentialRampToValueAtTime(.00001,end);
+
+  filter.connect(envelope);
+  envelope.connect(ac.destination);
+
+  [1,2,3,4,5].forEach((harmonic,i)=>{
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.type = "sine";
+    osc.frequency.value = freq*harmonic;
+    gain.gain.value = [1,.43,.19,.09,.04][i];
+    osc.connect(gain);
+    gain.connect(filter);
+    osc.start(when);
+    osc.stop(end+.06);
+    oscillators.push(osc);
+    osc.onended = () => {
+      oscillators = oscillators.filter(o=>o!==osc);
+      osc.disconnect();
+      gain.disconnect();
+    };
+  });
+}
+
+function stop() {
+  playId++;
+  oscillators.forEach(o=>{
+    try { o.stop(); } catch(e) {}
+  });
+  oscillators = [];
+  status("Reproducción detenida.");
+}
+
+function play() {
+  stop();
+  const notes = validate();
+  if (!notes) return;
+
+  const id = playId;
+  const bpm = Math.max(40,
+    Math.min(240,Number($("bpm").value)||110));
+  const beat = 60/bpm*Number($("duration").value);
+  const start = audio().currentTime+.07;
+
+  notes.forEach((n,i)=>{
+    if (!n.rest)
+      pianoNote(n.midi,start+i*beat,beat*.88);
+  });
+
+  status("Reproduciendo melodía...");
+  setTimeout(()=>{
+    if (id===playId) status("Reproducción terminada.");
+  },(notes.length*beat+.2)*1000);
+}
+
+function appendNote(note) {
+  notesEl.value +=
+    (notesEl.value.trim()?" ":"")+note;
+  refresh();
+}
+
+function createNoteButtons() {
+  noteButtonsEl.innerHTML = "";
+
+  const buttons = [
+    "C4","D4","E4","F4",
+    "G4","A4","B4","C5",
+    "C#4","D#4","F#4","G#4",
+    "A#4","Bb4","R"
+  ];
+
+  buttons.forEach(note => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "note-btn";
+    btn.textContent = note;
+
+    btn.onclick = () => {
+      if (note === "R") {
+        appendNote("R");
+        status("Silencio agregado.");
+        return;
+      }
+
+      const parsed = /^([A-G])([#b]?)([0-8]?)$/.exec(note);
+      const name = parsed[1] + parsed[2];
+      const octave = Number(parsed[3]);
+      const midi = (octave + 1) * 12 + pitch[name];
+
+      pianoNote(midi, audio().currentTime + .01, .65);
+      appendNote(note);
+      status("Nota agregada: " + note);
+    };
+
+    noteButtonsEl.append(btn);
+  });
+}
+
+function save(filename,blob) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  return url;
+}
+
+function createPdf(notes) {
+  const pageW=595.28, pageH=841.89;
+  const perLine=12, linesPerPage=8;
+  const dur=Number($("duration").value);
+  const bpm=Number($("bpm").value)||110;
+
+  const num=n=>Number(n).toFixed(2);
+  const escape=s=>String(s)
+    .replace(/\\/g,"\\\\")
+    .replace(/\(/g,"\\(")
+    .replace(/\)/g,"\\)")
+    .replace(/[^\x20-\x7e]/g,"?");
+
+  const txt=(x,y,size,s)=>
+    `BT /F1 ${size} Tf ${num(x)} ${num(y)} Td (${escape(s)}) Tj ET\n`;
+
+  const line=(a,b,c,d,w=.8)=>
+    `${w} w ${num(a)} ${num(b)} m ${num(c)} ${num(d)} l S\n`;
+
+  function ellipse(x,y,filled) {
+    const rx=5.7,ry=3.8,k=.5522848;
+    return `${num(x+rx)} ${num(y)} m
+${num(x+rx)} ${num(y+k*ry)} ${num(x+k*rx)} ${num(y+ry)} ${num(x)} ${num(y+ry)} c
+${num(x-k*rx)} ${num(y+ry)} ${num(x-rx)} ${num(y+k*ry)} ${num(x-rx)} ${num(y)} c
+${num(x-rx)} ${num(y-k*ry)} ${num(x-k*rx)} ${num(y-ry)} ${num(x)} ${num(y-ry)} c
+${num(x+k*rx)} ${num(y-ry)} ${num(x+rx)} ${num(y-k*ry)} ${num(x+rx)} ${num(y)} c
+${filled?"f":"S"}\n`;
+  }
+
+  const step=n=>
+    n.octave*7+natural.indexOf(n.name[0]);
+  const e4=4*7+2;
+  const totalLines=Math.ceil(notes.length/perLine);
+  const totalPages=Math.max(1,
+    Math.ceil(totalLines/linesPerPage));
+  const pages=[];
+
+  for(let pg=0;pg<totalPages;pg++) {
+    let ops="0 0 0 RG 0 0 0 rg\n";
+    ops+=txt(45,795,19,"PARTITURA BAZILIO");
+    ops+=txt(45,775,10,
+      `Tempo: ${bpm} BPM | A4 = 440 Hz`);
+
+    for(let l=0;l<linesPerPage;l++) {
+      const start=(pg*linesPerPage+l)*perLine;
+      if(start>=notes.length) break;
+      const bottom=665-l*89;
+
+      for(let j=0;j<5;j++)
+        ops+=line(70,bottom+j*10,551,bottom+j*10);
+
+      ops+=txt(49,bottom+18,14,"G");
+
+      notes.slice(start,start+perLine)
+        .forEach((n,i)=>{
+        const x=111+i*35;
+
+        if(n.rest) {
+          ops+=line(x-5,bottom+19,
+                    x+5,bottom+19,3);
+          ops+=txt(x-5,bottom-19,8,"R");
+          return;
+        }
+
+        const y=bottom+(step(n)-e4)*5;
+
+        if(y<bottom)
+          for(let yy=bottom-10;yy>=y;yy-=10)
+            ops+=line(x-9,yy,x+9,yy);
+
+        if(y>bottom+40)
+          for(let yy=bottom+50;yy<=y;yy+=10)
+            ops+=line(x-9,yy,x+9,yy);
+
+        if(n.name.includes("#"))
+          ops+=txt(x-16,y-3,12,"#");
+
+        if(n.name.includes("b"))
+          ops+=txt(x-15,y-3,12,"b");
+
+        ops+=ellipse(x,y,dur!==2);
+
+        const up=y<bottom+20;
+        const stemX=x+(up?5.2:-5.2);
+        const stemY=y+(up?29:-29);
+
+        ops+=line(stemX,y,stemX,stemY,1);
+
+        if(dur===.5)
+          ops+=line(stemX,stemY,
+            stemX+(up?10:-10),
+            stemY+(up?-9:9),1);
+
+        ops+=txt(x-12,bottom-19,8,
+          n.name+n.octave);
+      });
+    }
+
+    ops+=txt(250,26,9,
+      `Pagina ${pg+1} / ${totalPages}`);
+    pages.push(ops);
+  }
+
+  const objects=[];
+  const add=s=>(objects.push(s),objects.length);
+  const catalog=add("");
+  const pagesRoot=add("");
+  const font=add(
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"
+  );
+  const ids=[];
+
+  pages.forEach(stream=>{
+    const content=add(
+      `<< /Length ${stream.length} >>\nstream\n${stream}endstream`
+    );
+    ids.push(add(
+      `<< /Type /Page /Parent ${pagesRoot} 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /Font << /F1 ${font} 0 R >> >> /Contents ${content} 0 R >>`
+    ));
+  });
+
+  objects[catalog-1]=
+    `<< /Type /Catalog /Pages ${pagesRoot} 0 R >>`;
+  objects[pagesRoot-1]=
+    `<< /Type /Pages /Kids [${ids.map(i=>i+" 0 R").join(" ")}] /Count ${ids.length} >>`;
+
+  let pdf="%PDF-1.4\n";
+  const offsets=[0];
+
+  objects.forEach((obj,i)=>{
+    offsets.push(pdf.length);
+    pdf+=`${i+1} 0 obj\n${obj}\nendobj\n`;
+  });
+
+  const xref=pdf.length;
+  pdf+=`xref\n0 ${objects.length+1}\n`;
+  pdf+="0000000000 65535 f \n";
+
+  offsets.slice(1).forEach(n=>{
+    pdf+=String(n).padStart(10,"0")+" 00000 n \n";
+  });
+
+  pdf+=`trailer\n<< /Size ${objects.length+1} /Root ${catalog} 0 R >>\nstartxref\n${xref}\n%%EOF`;
+
+  return new Uint8Array(
+    [...pdf].map(c=>c.charCodeAt(0))
+  );
+}
+
+$("downloadPdf").onclick=()=>{
+  const notes=validate();
+  if(!notes) return;
+
+  const windowPdf=window.open("","_blank");
+
+  try {
+    const bytes=createPdf(notes);
+    const blob=new Blob([bytes],
+      {type:"application/pdf"});
+    const url=save("partitura_piano.pdf",blob);
+
+    if(windowPdf) {
+      windowPdf.location.replace(url);
+      status("PDF descargado y abierto.");
+    } else {
+      status("PDF descargado. Permite las ventanas emergentes.");
+    }
+
+    setTimeout(()=>URL.revokeObjectURL(url),120000);
+  } catch(e) {
+    if(windowPdf) windowPdf.close();
+    console.error(e);
+    status("Error al generar el PDF.");
+  }
+};
+
+$("export").onclick=()=>{
+  const notes=validate();
+  if(!notes) return;
+
+  const base=Number($("octave").value);
+  const sequence=notes.map(n=>
+    n.rest?"R":
+    n.name+(n.octave!==base?n.octave:"")
+  ).join(" ");
+
+  const source=`Main { ${sequence} }\n`;
+  const previewWindow=window.open("","_blank");
+
+  try {
+    const blob=new Blob([source],
+      {type:"text/plain;charset=utf-8"});
+    const url=save("mis_notas.bzl",blob);
+
+    if(previewWindow) {
+      const doc=previewWindow.document;
+      doc.title="Vista previa - mis_notas.bzl";
+      const heading=doc.createElement("h2");
+      heading.textContent="mis_notas.bzl";
+      const pre=doc.createElement("pre");
+      pre.textContent=source;
+      doc.body.replaceChildren(heading,pre);
+      doc.body.style.cssText=
+        "background:#10131c;color:#edf2ff;font-family:monospace;padding:24px";
+      status(".bzl descargado y abierto.");
+    } else {
+      status(".bzl descargado. Permite las ventanas emergentes.");
+    }
+
+    setTimeout(()=>URL.revokeObjectURL(url),120000);
+  } catch(e) {
+    if(previewWindow) previewWindow.close();
+    console.error(e);
+    status("Error al exportar .bzl.");
+  }
+};
+
+$("play").onclick=play;
+$("stop").onclick=stop;
+$("clear").onclick=()=>{
+  stop();
+  notesEl.value="";
+  refresh();
+  status("Notas eliminadas.");
+};
+
+notesEl.addEventListener("input",refresh);
+$("octave").addEventListener("change",refresh);
+
+createNoteButtons();
+refresh();
+
+})();
+</script>
+</body>
+</html>
